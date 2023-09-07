@@ -1,4 +1,5 @@
 import pygame
+import pygame.gfxdraw
 
 class TextButton(pygame.sprite.Sprite):
     ''' A button treated like a Sprite... and killed too '''

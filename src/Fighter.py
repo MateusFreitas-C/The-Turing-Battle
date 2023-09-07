@@ -1,6 +1,6 @@
 import pygame
 import random
-from DamageText import DamageText
+from src.DamageText import DamageText
 
 class Fighter:
     def __init__(self, surface, x, y, name, max_hp, strength):
