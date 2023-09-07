@@ -84,12 +84,10 @@ class Game():
             _.kill()
 
     def check_score(self, answered="wrong"):
-        ''' here we check if the answer is right '''            
-        # until there are questions (before last)
         if self.qnum < len(questions):
             print(self.qnum, len(questions))
             if answered == "right":
-                time.sleep(.1) # to avoid adding more point when pressing too much
+                time.sleep(.5)
                 self.points += 1
                 self.player.attack(self.enemy)
 
@@ -109,7 +107,7 @@ class Game():
             if answered == "right":
                 self.player.attack(self.enemy)
                 self.kill()
-                time.sleep(.1)
+                time.sleep(.5)
                 self.points +=1
             else:
                 self.enemy.attack(self.player)
