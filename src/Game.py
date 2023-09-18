@@ -4,7 +4,7 @@ from src.Fighter import Fighter
 from src.HealthBar import HealthBar
 from src.TextButton import TextButton
 from src.label import *
-from src.questions import questions
+from src.questions import *
 import time
 
 class Game():
@@ -28,14 +28,29 @@ class Game():
         self.restart_img = pygame.image.load("img/Icons/restart.png").convert_alpha()
 
         #Game caracters
-        self.player = Fighter(self.screen, 200, 260, "Turing", 80, 10)
-        self.enemy = Fighter(self.screen, 550, 270, "Bandit", 50, 10)
+        self.player = Fighter(self.screen, 200, 260, "Turing", 50, 5)
+        self.enemies = [
+            Fighter(self.screen, 550, 270, "Bandit", 10, 5),
+            Fighter(self.screen, 550, 270, "Bandit", 20, 5),
+            Fighter(self.screen, 550, 270, "Bandit", 25, 5)
+        ]
 
+        self.current_enemy = 0
+        self.enemy = self.enemies[self.current_enemy]
 
         #Game configs
         self.clock = pygame.time.Clock()
         self.fps = 60
         self.run_game = True
+
+        if self.current_enemy == 0:
+            self.questions = easy_questions
+        
+        elif self.current_enemy == 1:
+            self.questions = medium_questions
+        
+        elif self.current_enemy == 2:
+            self.questions = hard_questions
 
         #Game utils
         self.buttons = pygame.sprite.Group()
@@ -43,7 +58,7 @@ class Game():
         self.enemy_health_bar = HealthBar(self.screen, 490, 190, self.enemy.hp, self.enemy.max_hp)
         self.qnum = 1
         self.points = 0
-        self.title = Label(self.screen, questions[self.qnum-1][0], 40, self.screen_height - 140, 20, color="white")
+        self.title = Label(self.screen, self.questions[self.qnum-1][0], 40, self.screen_height - 140, 20, color="white")
         self.restart_button = ImageButton(self.screen, 330, 120, self.restart_img, 120, 30)
 
 
@@ -84,30 +99,34 @@ class Game():
             _.kill()
 
     def check_score(self, answered="wrong"):
-        if self.qnum < len(questions):
-            print(self.qnum, len(questions))
+        if self.qnum < len(self.questions):
+            print(self.qnum, len(self.questions))
             if answered == "right":
                 time.sleep(.5)
                 self.points += 1
                 self.player.attack(self.enemy)
+                time.sleep(.5)
 
             else:
+                time.sleep(.2)
                 self.enemy.attack(self.player)
 
             self.qnum += 1 # counter for next question in the list
             # Change the text of the question
-            self.title.change_text(questions[self.qnum-1][0], color="white")
+            self.title.change_text(self.questions[self.qnum-1][0], color="white")
             # change the question number
+            time.sleep(.5)
             self.show_question() # delete old buttons and show new
                 
 
             # for the last question...
-        elif self.qnum == len(questions):
-            print(self.qnum, len(questions))
+        elif self.qnum == len(self.questions):
+            print(self.qnum, len(self.questions))
             if answered == "right":
+                
                 self.player.attack(self.enemy)
-                self.kill()
                 time.sleep(.5)
+                self.kill()
                 self.points +=1
             else:
                 self.enemy.attack(self.player)
@@ -117,7 +136,7 @@ class Game():
         print("Click on one answer")
 
             # Verifique se a resposta clicada é igual à resposta correta da pergunta atual
-        if clicked_answer == questions[self.qnum-1][2]:
+        if clicked_answer == self.questions[self.qnum-1][2]:
             self.check_score("right")
         else:
             self.check_score()
@@ -132,18 +151,18 @@ class Game():
         # randomized, so that the right one is not on top
 
         # ============== TEXT: question and answers ====================
-        self.buttons.add(TextButton(self.screen, (60, pos[0]), questions[self.qnum-1][1][0], 20, "red on yellow",
+        self.buttons.add(TextButton(self.screen, (60, pos[0]), self.questions[self.qnum-1][1][0], 20, "red on yellow",
                 hover_colors="blue on orange", style="button1", borderc=(255,255,0),
-                command=lambda: self.on_click(questions[self.qnum-1][1][0])))
-        self.buttons.add(TextButton(self.screen, (460, pos[1]), questions[self.qnum-1][1][1], 20, "red on yellow",
+                command=lambda: self.on_click(self.questions[self.qnum-1][1][0])))
+        self.buttons.add(TextButton(self.screen, (460, pos[1]), self.questions[self.qnum-1][1][1], 20, "red on yellow",
                 hover_colors="blue on orange", style="button1", borderc=(255,255,0),
-                command=lambda: self.on_click(questions[self.qnum-1][1][1])))
-        self.buttons.add(TextButton(self.screen, (60, pos[2]), questions[self.qnum-1][1][2], 20, "red on yellow",
+                command=lambda: self.on_click(self.questions[self.qnum-1][1][1])))
+        self.buttons.add(TextButton(self.screen, (60, pos[2]), self.questions[self.qnum-1][1][2], 20, "red on yellow",
                 hover_colors="blue on orange", style="button1", borderc=(255,255,0),
-                command=lambda: self.on_click(questions[self.qnum-1][1][2])))
-        self.buttons.add(TextButton(self.screen, (460, pos[3]), questions[self.qnum-1][1][3], 20, "red on yellow",
+                command=lambda: self.on_click(self.questions[self.qnum-1][1][2])))
+        self.buttons.add(TextButton(self.screen, (460, pos[3]), self.questions[self.qnum-1][1][3], 20, "red on yellow",
                 hover_colors="blue on orange", style="button1", borderc=(255,255,0),
-                command=lambda: self.on_click(questions[self.qnum-1][1][3])))
+                command=lambda: self.on_click(self.questions[self.qnum-1][1][3])))
 
     def check_game_over(self):
         if self.player.alive == False: 
@@ -153,9 +172,19 @@ class Game():
 
         if self.enemy.alive == True:
             alive_enemy += 1
+
+        if self.enemy.alive == False:
+            if self.current_enemy < len(self.enemies) - 1:
+            # Avance para o próximo inimigo
+                time.sleep(.5)
+                self.current_enemy += 1
+                self.qnum = 0
+                self.player.reset()
+                self.enemy = self.enemies[self.current_enemy]
+                self.enemy.reset()
             
-        if alive_enemy == 0:
-            self.game_over = 1
+            else:
+                self.game_over = 1
 
         if self.game_over != 0:
 
@@ -171,6 +200,7 @@ class Game():
                 self.points = 0
                 self.qnum = 1
                 self.game_over = 0
+                self.current_enemy = 0
 
     def run(self):
         self.run_game = True
