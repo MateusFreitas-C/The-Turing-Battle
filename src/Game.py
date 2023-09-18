@@ -20,6 +20,8 @@ class Game():
         pygame.display.set_caption("The Turing Battle")
         self.game_over = 0
 
+        self.questions = easy_questions
+
         #Game Images
         self.backgroud_img = pygame.image.load("img/Background/background.png").convert_alpha()
         self.panel_img = pygame.image.load("img/Icons/panel.png").convert_alpha()
@@ -42,15 +44,6 @@ class Game():
         self.clock = pygame.time.Clock()
         self.fps = 60
         self.run_game = True
-
-        if self.current_enemy == 0:
-            self.questions = easy_questions
-        
-        elif self.current_enemy == 1:
-            self.questions = medium_questions
-        
-        elif self.current_enemy == 2:
-            self.questions = hard_questions
 
         #Game utils
         self.buttons = pygame.sprite.Group()
@@ -202,6 +195,16 @@ class Game():
                 self.game_over = 0
                 self.current_enemy = 0
 
+    def check_level(self):
+        if self.current_enemy == 0:
+            self.questions = easy_questions
+        
+        elif self.current_enemy == 1:
+            self.questions = medium_questions
+        
+        elif self.current_enemy == 2:
+            self.questions = hard_questions
+
     def run(self):
         self.run_game = True
 
@@ -212,5 +215,6 @@ class Game():
             show_labels()
             self.show_question()
             self.check_game_over()
+            self.check_level()
             self.handle_quit()
             pygame.display.update()
