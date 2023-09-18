@@ -105,8 +105,7 @@ class Game():
                 self.enemy.attack(self.player)
 
             self.qnum += 1 # counter for next question in the list
-            # Change the text of the question
-            self.title.change_text(self.questions[self.qnum-1][0], color="white")
+            self.check_level()
             # change the question number
             time.sleep(.5)
             self.show_question() # delete old buttons and show new
@@ -138,7 +137,7 @@ class Game():
 
         # Kills the previous buttons/sprites
         self.kill()
-            
+        self.title.change_text(self.questions[self.qnum-1][0], color="white")
         # The 4 position of the buttons
         pos = [self.screen_height-35, self.screen_height - 70, self.screen_height - 70, self.screen_height - 35]
         # randomized, so that the right one is not on top
@@ -214,7 +213,7 @@ class Game():
             self.draw()
             show_labels()
             self.show_question()
-            self.check_game_over()
             self.check_level()
+            self.check_game_over()
             self.handle_quit()
             pygame.display.update()
