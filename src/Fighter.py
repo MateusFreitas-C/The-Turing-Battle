@@ -82,16 +82,14 @@ class Fighter:
 
     def attack(self, target):
         #deal damage to enemy
-        rand = random.randint(-5, 5)
-        damage = self.strength + rand
-        target.hp -= damage
+        target.hp -= self.strength
         target.hurt()
         if target.hp < 1:
             target.hp = 0
             target.alive = False
             target.death()
 
-        damage_text = DamageText(target.rect.centerx, target.rect.y, str(damage), (255, 0 ,0))
+        damage_text = DamageText(target.rect.centerx, target.rect.y, str(self.strength), (255, 0 ,0))
         self.damage_text_group.add(damage_text)
 
         #variables to attack
