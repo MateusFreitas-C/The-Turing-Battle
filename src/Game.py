@@ -171,7 +171,7 @@ class Game():
             # Avance para o próximo inimigo
                 time.sleep(.5)
                 self.current_enemy += 1
-                self.qnum = 0
+                self.qnum = 1
                 self.player.reset()
                 self.enemy = self.enemies[self.current_enemy]
                 self.enemy.reset()
