@@ -19,18 +19,32 @@ class Fighter:
 
         temp_list = []
 
-        for i in range(8):
-            img = pygame.image.load(f"img/{self.name}/Idle/{i}.png")
-            img = pygame.transform.scale(img, (img.get_width() * 3, img.get_height() * 3))
+        for i in range(13):
+            img = pygame.image.load(f"img/{self.name}/Idle/frame_{i}.png")
+            img = pygame.transform.scale(img, (img.get_width(), img.get_height()))
+            temp_list.append(img)
+
+        for i in range(12, -1, -1):
+            img = pygame.image.load(f"img/{self.name}/Idle/frame_{i}.png")
+            img = pygame.transform.scale(img, (img.get_width(), img.get_height()))
             temp_list.append(img)
 
         self.animation_list.append(temp_list)
 
         temp_list = []
 
-        for i in range(8):
-            img = pygame.image.load(f"img/{self.name}/Attack/{i}.png")
-            img = pygame.transform.scale(img, (img.get_width() * 3, img.get_height() * 3))
+        for i in range(20):
+            img = pygame.image.load(f"img/{self.name}/Attack/frame_{i}.png")
+            img = pygame.transform.scale(img, (img.get_width(), img.get_height()))
+            temp_list.append(img)
+
+        self.animation_list.append(temp_list)
+
+        temp_list = []
+
+        for i in range(18):
+            img = pygame.image.load(f"img/{self.name}/Hurt/frame_{i}.png")
+            img = pygame.transform.scale(img, (img.get_width(), img.get_height()))
             temp_list.append(img)
 
         self.animation_list.append(temp_list)
@@ -38,20 +52,14 @@ class Fighter:
         temp_list = []
 
         for i in range(3):
-            img = pygame.image.load(f"img/{self.name}/Hurt/{i}.png")
-            img = pygame.transform.scale(img, (img.get_width() * 3, img.get_height() * 3))
+            img = pygame.image.load(f"img/{self.name}/Hurt/frame_{i+7}.png")
+            img = pygame.transform.scale(img, (img.get_width(), img.get_height()))
             temp_list.append(img)
 
         self.animation_list.append(temp_list)
 
-        temp_list = []
-
-        for i in range(10):
-            img = pygame.image.load(f"img/{self.name}/Death/{i}.png")
-            img = pygame.transform.scale(img, (img.get_width() * 3, img.get_height() * 3))
-            temp_list.append(img)
-
-        self.animation_list.append(temp_list)
+        self.icon = pygame.image.load(f"img/{self.name}/icon.png")
+        self.icon = pygame.transform.scale(self.icon, (self.icon.get_width(), self.icon.get_height()))
 
         self.image = self.animation_list[self.action][self.frame_index]
         self.rect = self.image.get_rect()
@@ -59,6 +67,11 @@ class Fighter:
 
     def draw(self):
         self.surface.blit(self.image, self.rect)
+
+    def draw_icon(self, x, y):
+        icon_rect = self.icon.get_rect()
+        icon_rect.center = (x, y)
+        self.surface.blit(self.icon, icon_rect)
 
     def update(self):
         animation_cooldown = 100
