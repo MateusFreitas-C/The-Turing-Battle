@@ -13,7 +13,7 @@ class Game():
         #create the screen
         self.bottom_panel = 150
         self.screen_width = 800
-        self.screen_height = 400 + self.bottom_panel
+        self.screen_height = 533 + self.bottom_panel
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
 
         #Game variables
@@ -23,18 +23,18 @@ class Game():
         self.questions = easy_questions
 
         #Game Images
-        self.backgroud_img = pygame.image.load("img/Background/background.png").convert_alpha()
+        self.backgroud_img = pygame.image.load("img/Background/background2.jpeg").convert_alpha()
         self.panel_img = pygame.image.load("img/Icons/panel.png").convert_alpha()
         self.victory_img = pygame.image.load("img/Icons/victory.png").convert_alpha()
         self.game_over_img = pygame.image.load("img/Icons/defeat.png").convert_alpha()
         self.restart_img = pygame.image.load("img/Icons/restart.png").convert_alpha()
 
         #Game caracters
-        self.player = Fighter(self.screen, 200, 260, "Turing", 50, 5)
+        self.player = Fighter(self.screen, 220, 300, "Turing", 10, 10)
         self.enemies = [
-            Fighter(self.screen, 550, 270, "Bandit", 10, 5),
-            Fighter(self.screen, 550, 270, "Bandit", 20, 5),
-            Fighter(self.screen, 550, 270, "Bandit", 25, 5)
+            Fighter(self.screen, 550, 320, "Robot1", 20, 4),
+            Fighter(self.screen, 550, 320, "Robot2", 20, 8),
+            Fighter(self.screen, 550, 320, "Robot3", 20, 10)
         ]
 
         self.current_enemy = 0
@@ -47,10 +47,9 @@ class Game():
 
         #Game utils
         self.buttons = pygame.sprite.Group()
-        self.player_health_bar = HealthBar(self.screen, 140, 190, self.player.hp, self.player.max_hp)
-        self.enemy_health_bar = HealthBar(self.screen, 490, 190, self.enemy.hp, self.enemy.max_hp)
+        self.player_health_bar = HealthBar(self.screen, 90, 40, self.player.hp, self.player.max_hp)
+        self.enemy_health_bar = HealthBar(self.screen, 90, 130, self.enemy.hp, self.enemy.max_hp)
         self.qnum = 1
-        self.points = 0
         self.title = Label(self.screen, self.questions[self.qnum-1][0], 40, self.screen_height - 140, 20, color="white")
         self.restart_button = ImageButton(self.screen, 330, 120, self.restart_img, 120, 30)
 
@@ -63,6 +62,10 @@ class Game():
             #Draw fighters
         self.player.draw()
         self.enemy.draw()
+
+            #Draw Icon
+        self.player.draw_icon(40, 40)
+        self.enemy.draw_icon(40, 140)    
 
             #Draw health bar
         self.player_health_bar.draw(self.player.hp)
@@ -95,10 +98,9 @@ class Game():
         if self.qnum < len(self.questions):
             print(self.qnum, len(self.questions))
             if answered == "right":
-                time.sleep(.5)
-                self.points += 1
+                time.sleep(.2)
                 self.player.attack(self.enemy)
-                time.sleep(.5)
+                time.sleep(.2)
 
             else:
                 time.sleep(.2)
@@ -107,7 +109,7 @@ class Game():
             self.qnum += 1 # counter for next question in the list
             self.check_level()
             # change the question number
-            time.sleep(.5)
+            time.sleep(.2)
             self.show_question() # delete old buttons and show new
                 
 
@@ -117,12 +119,11 @@ class Game():
             if answered == "right":
                 
                 self.player.attack(self.enemy)
-                time.sleep(.5)
+                time.sleep(.2)
                 self.kill()
-                self.points +=1
             else:
                 self.enemy.attack(self.player)
-            time.sleep(.5)
+            time.sleep(.2)
 
     def on_click(self, clicked_answer):
         print("Click on one answer")
@@ -165,15 +166,15 @@ class Game():
         if self.enemy.alive == True:
             alive_enemy += 1
 
-        if self.enemy.alive == False:
+        else:
             if self.current_enemy < len(self.enemies) - 1:
             # Avance para o próximo inimigo
-                time.sleep(.5)
-                self.current_enemy += 1
-                self.qnum = 1
-                self.player.reset()
-                self.enemy = self.enemies[self.current_enemy]
-                self.enemy.reset()
+                if self.restart_button.draw():
+                    self.current_enemy += 1
+                    self.qnum = 1
+                    self.player.reset()
+                    self.player.strength -= 3
+                    self.enemy = self.enemies[self.current_enemy]
             
             else:
                 self.game_over = 1
@@ -189,7 +190,6 @@ class Game():
             if self.restart_button.draw():
                 self.player.reset()
                 self.enemy.reset()
-                self.points = 0
                 self.qnum = 1
                 self.game_over = 0
                 self.current_enemy = 0
