@@ -6,6 +6,7 @@ from src.TextButton import TextButton
 from src.label import *
 from src.questions import *
 import time
+import random
 
 class Game():
     def __init__(self):
@@ -20,21 +21,26 @@ class Game():
         pygame.display.set_caption("The Turing Battle")
         self.game_over = 0
 
+        random.shuffle(easy_questions)
+        random.shuffle(medium_questions)
+        random.shuffle(hard_questions)
+
         self.questions = easy_questions
 
         #Game Images
         self.backgroud_img = pygame.image.load("img/Background/background2.jpeg").convert_alpha()
-        self.panel_img = pygame.image.load("img/Icons/panel.png").convert_alpha()
+        self.panel_img = pygame.image.load("img/Icons/panel2.png").convert_alpha()
         self.victory_img = pygame.image.load("img/Icons/victory.png").convert_alpha()
         self.game_over_img = pygame.image.load("img/Icons/defeat.png").convert_alpha()
         self.restart_img = pygame.image.load("img/Icons/restart.png").convert_alpha()
+        self.next_img = pygame.image.load("img/Icons/next.png").convert_alpha()
 
         #Game caracters
         self.player = Fighter(self.screen, 220, 300, "Turing", 10, 10)
         self.enemies = [
-            Fighter(self.screen, 550, 320, "Robot1", 20, 4),
+            Fighter(self.screen, 550, 320, "Robot1", 10, 4),
             Fighter(self.screen, 550, 320, "Robot2", 20, 8),
-            Fighter(self.screen, 550, 320, "Robot3", 20, 10)
+            Fighter(self.screen, 550, 320, "Robot3", 30, 10)
         ]
 
         self.current_enemy = 0
@@ -50,8 +56,9 @@ class Game():
         self.player_health_bar = HealthBar(self.screen, 90, 40, self.player.hp, self.player.max_hp)
         self.enemy_health_bar = HealthBar(self.screen, 90, 130, self.enemy.hp, self.enemy.max_hp)
         self.qnum = 1
-        self.title = Label(self.screen, self.questions[self.qnum-1][0], 40, self.screen_height - 140, 20, color="white")
+        self.title = Label(self.screen, self.questions[self.qnum-1][0], 40, self.screen_height - 140, 20, color=(17, 42, 70))
         self.restart_button = ImageButton(self.screen, 330, 120, self.restart_img, 120, 30)
+        self.next_button = ImageButton(self.screen, 330, 120, self.next_img, 120, 30)
 
 
     def draw(self):
@@ -138,24 +145,22 @@ class Game():
 
         # Kills the previous buttons/sprites
         self.kill()
-        self.title.change_text(self.questions[self.qnum-1][0], color="white")
+        self.title.change_text(self.questions[self.qnum-1][0], color=(17, 42, 70))
         # The 4 position of the buttons
-        pos = [self.screen_height-35, self.screen_height - 70, self.screen_height - 70, self.screen_height - 35]
-        # randomized, so that the right one is not on top
+        pos = [self.screen_height-35, self.screen_height - 80, self.screen_height - 80, self.screen_height - 35]
 
-        # ============== TEXT: question and answers ====================
         self.buttons.add(TextButton(self.screen, (60, pos[0]), self.questions[self.qnum-1][1][0], 20, "red on yellow",
-                hover_colors="blue on orange", style="button1", borderc=(255,255,0),
+                hover_colors="blue on orange", style="button2", borderc=(255,255,0),
                 command=lambda: self.on_click(self.questions[self.qnum-1][1][0])))
         self.buttons.add(TextButton(self.screen, (460, pos[1]), self.questions[self.qnum-1][1][1], 20, "red on yellow",
-                hover_colors="blue on orange", style="button1", borderc=(255,255,0),
+                hover_colors="blue on orange", style="button2", borderc=(255,255,0),
                 command=lambda: self.on_click(self.questions[self.qnum-1][1][1])))
         self.buttons.add(TextButton(self.screen, (60, pos[2]), self.questions[self.qnum-1][1][2], 20, "red on yellow",
-                hover_colors="blue on orange", style="button1", borderc=(255,255,0),
+                hover_colors="blue on orange", style="button2", borderc=(255,255,0),
                 command=lambda: self.on_click(self.questions[self.qnum-1][1][2])))
         self.buttons.add(TextButton(self.screen, (460, pos[3]), self.questions[self.qnum-1][1][3], 20, "red on yellow",
-                hover_colors="blue on orange", style="button1", borderc=(255,255,0),
-                command=lambda: self.on_click(self.questions[self.qnum-1][1][3])))
+                hover_colors="blue on orange", style="button2", borderc=(255,255,0),
+                command=lambda: self.on_click(self.questions[self.qnum-1][1][3])))        
 
     def check_game_over(self):
         if self.player.alive == False: 
@@ -169,11 +174,10 @@ class Game():
         else:
             if self.current_enemy < len(self.enemies) - 1:
             # Avance para o próximo inimigo
-                if self.restart_button.draw():
+                if self.next_button.draw():
                     self.current_enemy += 1
                     self.qnum = 1
                     self.player.reset()
-                    self.player.strength -= 3
                     self.enemy = self.enemies[self.current_enemy]
             
             else:
@@ -188,11 +192,13 @@ class Game():
                 self.screen.blit(self.game_over_img, (290, 50))
 
             if self.restart_button.draw():
+                self.current_enemy = 0
+                self.enemy = self.enemies[self.current_enemy]
                 self.player.reset()
                 self.enemy.reset()
                 self.qnum = 1
                 self.game_over = 0
-                self.current_enemy = 0
+                
 
     def check_level(self):
         if self.current_enemy == 0:

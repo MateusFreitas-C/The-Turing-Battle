@@ -13,7 +13,6 @@ class TextButton(pygame.sprite.Sprite):
 
         # the hover_colors attribute needs to be fixed
         super().__init__()
-        global num
         self.surface = surface
         self.text = text
         self.command = command
@@ -41,7 +40,7 @@ class TextButton(pygame.sprite.Sprite):
 
     def render(self, text):
         # we have a surface
-        self.text_render = self.font.render(text, 1, self.fg)
+        self.text_render = self.font.render(text, 1, (17, 42, 70))
         # memorize the surface in the image attributes
         self.image = self.text_render
 
